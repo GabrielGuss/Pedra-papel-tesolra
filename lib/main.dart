@@ -14,8 +14,8 @@ class PedraPapelTesoura extends StatefulWidget {
 
 class _PedraPapelTesouraState extends State<PedraPapelTesoura> {
   final List<String> opcoes = ["pedra", "papel", "tesoura"];
-  String escolhaUsuario = "";
-  String escolhaMaquina = "";
+  String escolhaUsuario = "pedra"; // Definir um valor inicial para evitar erro
+  String escolhaMaquina = "pedra";
   int vitorias = 0;
   int derrotas = 0;
   int empates = 0;
@@ -40,7 +40,7 @@ class _PedraPapelTesouraState extends State<PedraPapelTesoura> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Pedra, Papel, Tesoura")),
+      appBar: AppBar(title: Text("Pedra, Papel, Tesoura"), centerTitle: true),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -52,11 +52,25 @@ class _PedraPapelTesouraState extends State<PedraPapelTesoura> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset("assets/$escolhaUsuario.png", width: 80, height: 80),
+              Image.asset(
+                "assets/$escolhaUsuario.png",
+                width: 80,
+                height: 80,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.error, size: 80, color: Colors.red);
+                },
+              ),
               SizedBox(width: 20),
               Text("vs", style: TextStyle(fontSize: 22)),
               SizedBox(width: 20),
-              Image.asset("assets/$escolhaMaquina.png", width: 80, height: 80),
+              Image.asset(
+                "assets/$escolhaMaquina.png",
+                width: 80,
+                height: 80,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.error, size: 80, color: Colors.red);
+                },
+              ),
             ],
           ),
           SizedBox(height: 20),
@@ -89,26 +103,30 @@ class _PedraPapelTesouraState extends State<PedraPapelTesoura> {
   }
 
   Widget placarBox(String titulo, int valor) {
-    return Column(
-      children: [
-        Text(
-          titulo,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Container(
-          width: 60,
-          height: 60,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black, width: 2),
-            borderRadius: BorderRadius.circular(10),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+          Text(
+            titulo,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          child: Text(
-            "$valor",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          SizedBox(height: 5),
+          Container(
+            width: 60,
+            height: 60,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black, width: 2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              "$valor",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -117,7 +135,14 @@ class _PedraPapelTesouraState extends State<PedraPapelTesoura> {
       onTap: () => jogar(opcao),
       child: Padding(
         padding: EdgeInsets.all(10),
-        child: Image.asset("assets/$opcao.png", width: 80, height: 80),
+        child: Image.asset(
+          "assets/$opcao.png",
+          width: 80,
+          height: 80,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(Icons.error, size: 80, color: Colors.red);
+          },
+        ),
       ),
     );
   }
