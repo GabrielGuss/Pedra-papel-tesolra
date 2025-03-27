@@ -1,29 +1,41 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(PedraPapelTesouraApp());
+  runApp(
+    MaterialApp(debugShowCheckedModeBanner: false, home: PedraPapelTesoura()),
+  );
 }
 
-class PedraPapelTesouraApp extends StatelessWidget {
+class PedraPapelTesoura extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: PedraPapelTesouraScreen(),
-    );
+  _PedraPapelTesouraState createState() => _PedraPapelTesouraState();
+}
+
+class _PedraPapelTesouraState extends State<PedraPapelTesoura> {
+  final List<String> opcoes = ["pedra", "papel", "tesoura"];
+  String escolhaUsuario = "";
+  String escolhaMaquina = "";
+  int vitorias = 0;
+  int derrotas = 0;
+  int empates = 0;
+
+  void jogar(String escolha) {
+    setState(() {
+      escolhaUsuario = escolha;
+      escolhaMaquina = opcoes[Random().nextInt(3)];
+
+      if (escolhaUsuario == escolhaMaquina) {
+        empates++;
+      } else if ((escolhaUsuario == "pedra" && escolhaMaquina == "tesoura") ||
+          (escolhaUsuario == "papel" && escolhaMaquina == "pedra") ||
+          (escolhaUsuario == "tesoura" && escolhaMaquina == "papel")) {
+        vitorias++;
+      } else {
+        derrotas++;
+      }
+    });
   }
-}
-
-class PedraPapelTesouraScreen extends StatefulWidget {
-  @override
-  _PedraPapelTesouraScreenState createState() =>
-      _PedraPapelTesouraScreenState();
-}
-
-class _PedraPapelTesouraScreenState extends State<PedraPapelTesouraScreen> {
-  int userScore = 0;
-  int machineScore = 0;
-  int ties = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -34,72 +46,78 @@ class _PedraPapelTesouraScreenState extends State<PedraPapelTesouraScreen> {
         children: [
           Text(
             "Disputa",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/pedra.png', width: 80),
-              Text("vs", style: TextStyle(fontSize: 20)),
-              Image.asset('assets/tesoura.png', width: 80),
+              Image.asset("assets/$escolhaUsuario.png", width: 80, height: 80),
+              SizedBox(width: 20),
+              Text("vs", style: TextStyle(fontSize: 22)),
+              SizedBox(width: 20),
+              Image.asset("assets/$escolhaMaquina.png", width: 80, height: 80),
             ],
           ),
           SizedBox(height: 20),
           Text(
             "Placar",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildScoreColumn("Você", userScore),
-              _buildScoreColumn("Empate", ties),
-              _buildScoreColumn("Máquina", machineScore),
+              placarBox("Você", vitorias),
+              placarBox("Empate", empates),
+              placarBox("Máquina", derrotas),
             ],
           ),
           SizedBox(height: 20),
           Text(
             "Opções",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildGestureImage('assets/pedra.png'),
-              _buildGestureImage('assets/papel.png'),
-              _buildGestureImage('assets/tesoura.png'),
-            ],
+            children: opcoes.map((opcao) => escolhaBotao(opcao)).toList(),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildScoreColumn(String label, int score) {
+  Widget placarBox(String titulo, int valor) {
     return Column(
       children: [
-        Text(label, style: TextStyle(fontSize: 16)),
+        Text(
+          titulo,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         Container(
-          margin: EdgeInsets.all(8),
-          padding: EdgeInsets.all(16),
+          width: 60,
+          height: 60,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
-            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.black, width: 2),
+            borderRadius: BorderRadius.circular(10),
           ),
-          child: Text(score.toString(), style: TextStyle(fontSize: 24)),
+          child: Text(
+            "$valor",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildGestureImage(String imagePath) {
+  Widget escolhaBotao(String opcao) {
     return GestureDetector(
-      onTap: () {
-        // Lógica do jogo aqui
-      },
+      onTap: () => jogar(opcao),
       child: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Image.asset(imagePath, width: 80),
+        padding: EdgeInsets.all(10),
+        child: Image.asset("assets/$opcao.png", width: 80, height: 80),
       ),
     );
   }
